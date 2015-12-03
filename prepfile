@@ -19,11 +19,12 @@ USEAGE: prepfile [-e] [FILE TO EDIT]
 
 -h |  --help         Print this help menu.
 
-This script takes one file as the file to edit, if any more are supplied, it
-chooses the last in the list. This script is designed to make scripts easier to
-create and edit by removing some of the tedious steps involved, aka typing. Once
-the file is finished editing, it will prompt the user for any arguments to give
-it, and will execute with them. "
+This script takes one file as the file to edit, if any more
+are supplied, it chooses the last in the list. This script
+is designed to make scripts easier to create and edit by
+removing some of the tedious steps involved, aka typing. Once
+the file is finished editing, it will prompt the user for any
+arguments to give it, and will execute with them. "
    exit 0
 }
 
