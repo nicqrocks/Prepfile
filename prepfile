@@ -1,0 +1,158 @@
+#!/bin/bash
+#This is a small script to make things easier when writing scripts.
+
+
+#Defualt values for certain things.
+editor="komodo"
+usefile="rename_me.sh"
+
+
+
+#Make help function for when I forget. Which is often...
+function print_help() {
+   echo "
+USEAGE: prepfile [-e] [FILE TO EDIT]
+
+-e [EDITOR]          Declare what editor to use
+                     when editing the file. The
+                     default is set to $editor.
+
+-h |  --help         Print this help menu.
+
+This script takes one file as the file to edit, if any more are supplied, it
+chooses the last in the list. This script is designed to make scripts easier to
+create and edit by removing some of the tedious steps involved, aka typing. Once
+the file is finished editing, it will prompt the user for any arguments to give
+it, and will execute with them. "
+   exit 0
+}
+
+
+
+#Check for any arguments given. If none are given, exit with help.
+if [ $# -lt 1 ]; then
+   print_help
+fi
+
+#Analize each argument given and take the appropriate action
+while [ $# -gt 0 ]
+do
+   case "$1" in
+   '-e')
+      shift
+      editor="$1"
+      shift
+      ;;
+   '-h'|'--help')
+      print_help
+      shift
+      ;;
+   '-'*)
+      echo "Option not recognized: $1. Skipping..."
+      shift
+      ;;
+   *)
+      usefile="$1"
+      shift
+      ;;
+   esac
+done
+
+
+
+#Keep trying until the exit code is 0.
+cont='yes'
+while [[ $cont == [Yy] ]] || [[ $cont == [Yy]es ]]
+do
+   #check if the file exists.
+   if [ ! -e "$usefile" ]; then
+      echo "Making the file '$usefile' ..."
+      touch $usefile
+   fi
+   
+   #open the editor.
+   echo "Opening editor $editor..."
+   $editor $usefile
+   
+   #change permissions so the file can be run.
+   echo "Setting permissions..."
+   chmod +x $usefile
+   
+   
+   
+   #Add any arguments to the file before executing it.
+   echo "Would you like to add any arguments?"
+   read answer
+   while [[ $answer != [Yy] ]] && [[ $answer != [Yy]es ]] && [[ $answer != [Nn] ]] && [[ $answer != [Nn]o ]]
+   do
+      echo "Answer not understood. Try again."
+      read answer
+   done
+   if [[ $answer == [Yy] ]] || [[ $answer == [Yy]es ]]; then
+      echo "Arguments to add:"
+      read args
+   elif [[ $answer == [Nn] ]] || [[ $answer == [Nn]o ]]; then
+      echo "No args"
+      args=''
+   fi
+   echo "executing the file..."
+   echo ""
+   echo "$(tput setaf 3)-----$usefile-----$(tput setaf 9)"
+   
+   
+   
+   #Run the file with the arguments, if any
+   if [[ "$usefile" == '/'* ]]; then
+      run="$usefile"
+   elif [[ "$usefile" == '~/'* ]]; then
+      run="$usefile"
+   else
+      run="./$usefile"
+   fi
+   $run $args
+   
+   
+   
+   #Determine what a good exit code should be based on the type/name of the
+   #file. For example, '.sh' should exit with a '0', but a '.pl' should exit
+   #with a '1'. This can be expounded upon, but the default will remain at 0.
+   case "$usefile" in
+   *'.sh')
+      goodexit=0
+      ;;
+   *.'pl')
+      goodexit=1
+      ;;
+   *)
+      #The default "good" exit code value.
+      goodexit=0
+      ;;
+   esac
+   
+   
+   
+   #Check if it exited with any errors.
+   code="$?"
+   if [ $code -eq $goodexit ]; then
+      echo ""
+      echo "Done."
+      exit 0
+   fi
+   
+   
+   #If the script does not have an exit code of 0
+   #ask to run it again.
+   echo "Exit code: $code"
+   echo ""
+   echo "The script seems to have failed. Would you like"
+   echo "to edit it some more?"
+   read cont
+   while [[ $answer != [Yy] ]] && [[ $answer != [Yy]es ]] && [[ $answer != [Nn] ]] && [[ $answer != [Nn]o ]]
+   do
+      echo "Answer not understood. Try again."
+      read cont
+   done
+   
+done
+
+exit 0
