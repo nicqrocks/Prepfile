@@ -5,6 +5,8 @@
 #Defualt values for certain things.
 editor="vim"
 usefile="rename_me.sh"
+#The default "good" exit code value for the system (Ususally zero).
+goodexit=0
 
 
 
@@ -29,6 +31,10 @@ arguments to give it, and will execute with them. "
 }
 
 
+#Make an alias to print out errors easier.
+alias echoerr='>&2 echo'
+
+
 
 #Check for any arguments given. If none are given, exit with help.
 if [ $# -lt 1 ]; then
@@ -49,8 +55,9 @@ do
       shift
       ;;
    '-'*)
-      echo "Option not recognized: $1. Skipping..."
-      shift
+      echoerr "Error - Option not recognized: $1"
+      echoerr "Exiting $0"
+      exit 1
       ;;
    *)
       usefile="$1"
@@ -75,9 +82,25 @@ do
    echo "Opening editor $editor..."
    $editor $usefile
    
+   #checking if the editor could open. If not, exit.
+   code=$?
+   if [ $code -ne $goodexit ]; then
+      echoerr "There was an error opening the editor!"
+      echoerr "The editor '$editor' returned exit code $code"
+      exit 2
+   fi
+   
    #change permissions so the file can be run.
    echo "Setting permissions..."
    chmod +x $usefile
+   
+   #Check if the permissions could be changed. If not exit.
+   code=$?
+   if [ $code -ne $goodexit ]; then
+       echoerr "Error changing permissions!"
+       echoerr "Changing permissions on '$usefile' returned exit code $code"
+       exit 3
+   fi
    
    
    
@@ -123,10 +146,6 @@ do
       ;;
    *.'pl')
       goodexit=1
-      ;;
-   *)
-      #The default "good" exit code value.
-      goodexit=0
       ;;
    esac
    
