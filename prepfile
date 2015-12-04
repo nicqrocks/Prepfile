@@ -31,9 +31,10 @@ arguments to give it, and will execute with them. "
 }
 
 
-#Make an alias to print out errors easier.
-alias echoerr='>&2 echo'
-
+#Make a small function to print out errors easier.
+function echoerr() {
+    echo "$1" >&2
+}
 
 
 #Check for any arguments given. If none are given, exit with help.
