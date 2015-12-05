@@ -5,8 +5,7 @@
 #Defualt values for certain things.
 editor="vim"
 usefile="rename_me.sh"
-#The default "good" exit code value for the system (Ususally zero).
-goodexit=0
+
 
 
 
@@ -73,6 +72,9 @@ done
 cont='yes'
 while [[ $cont == [Yy] ]] || [[ $cont == [Yy]es ]]
 do
+   #The default "good" exit code value for the system (Ususally zero).
+   goodexit=0
+   
    #check if the file exists.
    if [ ! -e "$usefile" ]; then
       echo "Making the file '$usefile' ..."
