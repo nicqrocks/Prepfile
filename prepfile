@@ -71,10 +71,7 @@ done
 #Keep trying until the exit code is 0.
 cont='yes'
 while [[ $cont == [Yy] ]] || [[ $cont == [Yy]es ]]
-do
-   #The default "good" exit code value for the system (Ususally zero).
-   goodexit=0
-   
+do 
    #check if the file exists.
    if [ ! -e "$usefile" ]; then
       echo "Making the file '$usefile' ..."
@@ -85,25 +82,9 @@ do
    echo "Opening editor $editor..."
    $editor $usefile
    
-   #checking if the editor could open. If not, exit.
-   code=$?
-   if [ $code -ne $goodexit ]; then
-      echoerr "There was an error opening the editor!"
-      echoerr "The editor '$editor' returned exit code $code"
-      exit 2
-   fi
-   
    #change permissions so the file can be run.
    echo "Setting permissions..."
    chmod +x $usefile
-   
-   #Check if the permissions could be changed. If not exit.
-   code=$?
-   if [ $code -ne $goodexit ]; then
-       echoerr "Error changing permissions!"
-       echoerr "Changing permissions on '$usefile' returned exit code $code"
-       exit 3
-   fi
    
    
    
@@ -140,23 +121,9 @@ do
    
    
    
-   #Determine what a good exit code should be based on the type/name of the
-   #file. For example, '.sh' should exit with a '0', but a '.pl' should exit
-   #with a '1'. This can be expounded upon, but the default will remain at 0.
-   case "$usefile" in
-   *'.sh')
-      goodexit=0
-      ;;
-   *.'pl')
-      goodexit=1
-      ;;
-   esac
-   
-   
-   
    #Check if it exited with any errors.
    code="$?"
-   if [ $code -eq $goodexit ]; then
+   if [ $code -eq 0 ]; then
       echo ""
       echo "Done."
       exit 0
