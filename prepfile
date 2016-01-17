@@ -110,6 +110,16 @@ do
    #Determine the kind of file it is by the file extention
    #at the end.
    case "$usefile" in
+   *'.c')
+      #Compile and run C source code.
+	  if [[ "$usefile" == '/'* ]] || [[ "$usefile" == '~/'* ]]; then
+         out=${usefile: 0: -2}
+      else
+      	  out=./${usefile: 0: -2}
+      fi
+	  gcc -o $out $usefile && $out
+	  code="$?"
+	  ;;
    *'.java')
       #Compile the java code and run it.
 	  class=${usefile: 0: -5} #Remove the '.java' extention
