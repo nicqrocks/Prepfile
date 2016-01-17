@@ -110,25 +110,28 @@ do
    #Determine the kind of file it is by the file extention
    #at the end.
    case "$usefile" in
+   *'.java')
+      #Compile the java code and run it.
+	  class=${usefile: 0: -5} #Remove the '.java' extention
+	  javac $usefile && java $class $args
+	  code="$?"
+	  ;;
    *'.sh'|*)
       #Run the file as a shell script.
-      if [[ "$usefile" == '/'* ]]; then
-         run="$usefile"
-      elif [[ "$usefile" == '~/'* ]]; then
-         run="$usefile"
+      if [[ "$usefile" == '/'* ]] || [[ "$usefile" == '~/'* ]]; then
+         $usefile $args
+		 code="$?"
       else
-      	  run="./$usefile"
+      	  ./$usefile $args
+	  code="$?"
       fi
 	  ;;
    esac
    
-   #Run with any arguments that were given.
-   $run $args
    
    
    
    #Check if it exited with any errors.
-   code="$?"
    if [ $code -eq 0 ]; then
       echo ""
       echo "Done."
