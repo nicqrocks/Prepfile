@@ -107,16 +107,22 @@ do
    echo ""
    echo "$(tput setaf 3)-----$usefile-----$(tput setaf 9)"
    
+   #Determine the kind of file it is by the file extention
+   #at the end.
+   case "$usefile" in
+   *'.sh'|*)
+      #Run the file as a shell script.
+      if [[ "$usefile" == '/'* ]]; then
+         run="$usefile"
+      elif [[ "$usefile" == '~/'* ]]; then
+         run="$usefile"
+      else
+      	  run="./$usefile"
+      fi
+	  ;;
+   esac
    
-   
-   #Run the file with the arguments, if any
-   if [[ "$usefile" == '/'* ]]; then
-      run="$usefile"
-   elif [[ "$usefile" == '~/'* ]]; then
-      run="$usefile"
-   else
-      run="./$usefile"
-   fi
+   #Run with any arguments that were given.
    $run $args
    
    
